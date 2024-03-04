@@ -1,0 +1,44 @@
+project_name:
+    type: str
+    help: What's your project / repository name?
+
+project_slug:
+    type: str
+    help: Directory name for the project
+    default: "{{ project_name.lower().replace(' ', '_') }}"
+
+description:
+    type: str
+    help: A short description of the project
+
+author_name:
+    type: str
+    help: Author full name
+    placeholder: John Doe
+
+author_email:
+    type: str
+    help: Author email
+    default: "{{author_name}}@gmail.com"
+
+project_license:
+    type: str
+    help: Your project LICENSE
+    default: MIT
+    choices:
+        - MIT
+        - BSD-3-Clause
+        - No license
+
+postgres_user:
+    type: str
+    help: Postgres user name
+    default: postgres
+
+postgres_password:
+    type: str
+    help: Postgres user password
+
+postgres_database:
+    type: str
+    help: Postgres database name for your project
