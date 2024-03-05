@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "app"
+version = "0.1.0"
+description = "ML API using FastAPI"
+authors = ["JordanMarcelino <jhordan.marcelino@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = "^0.110.0"
+slowapi = "^0.1.9"
+sqlmodel = "^0.0.16"
+pydantic-settings = "^2.2.1"
+uvicorn = {extras = ["standard"], version = "^0.27.1"}
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.2"
+pytest-cov = "^4.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
