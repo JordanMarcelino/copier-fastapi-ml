@@ -17,6 +17,8 @@ class Settings(BaseSettings):
 
     # 60 minutes * 24 hours * 1 days = 1 days
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 1
+    # 60 minutes * 24 hours * 7 days = 7 days
+    REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7
 
     BACKEND_CORS_ORIGINS: Union[list[AnyHttpUrl], str] = []
 
