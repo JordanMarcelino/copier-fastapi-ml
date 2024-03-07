@@ -23,7 +23,7 @@ $ conda install poetry
 ## To start a new project, run:
 
 ```bash
-copier copy https://github.com/JordanMarcelino/copier-fastapi-ml --trust
+copier copy https://github.com/JordanMarcelino/copier-fastapi-ml path/to/destination --trust
 ```
 
 ## Installing development requirements
