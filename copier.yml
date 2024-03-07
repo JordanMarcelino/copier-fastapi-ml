@@ -14,12 +14,11 @@ description:
 author_name:
     type: str
     help: Author full name
-    placeholder: John Doe
 
 author_email:
     type: str
     help: Author email
-    default: "{{author_name}}@gmail.com"
+    default: "{{author_name.lower().replace(' ', '')}}@gmail.com"
 
 project_license:
     type: str
