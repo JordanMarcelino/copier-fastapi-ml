@@ -1,6 +1,7 @@
 import enum
 from datetime import datetime
 from typing import Optional
+from uuid import UUID
 from uuid import uuid4
 
 from sqlmodel import BigInteger
@@ -39,7 +40,7 @@ class UserCreate(UserBase):
 
 
 class UserRead(UserBase):
-    id: str
+    id: UUID
     status: Status
     role: Role
     created_at: int
