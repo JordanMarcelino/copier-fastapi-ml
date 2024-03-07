@@ -1,14 +1,9 @@
 import os
 from secrets import token_urlsafe
-from typing import Optional
-from typing import Union
+from typing import Optional, Union
 
-from pydantic import AnyHttpUrl
-from pydantic import field_validator
-from pydantic import ValidationInfo
-
-from pydantic_settings import BaseSettings
-from pydantic_settings import SettingsConfigDict
+from pydantic import AnyHttpUrl, ValidationInfo, field_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
