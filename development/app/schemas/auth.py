@@ -1,22 +1,17 @@
-import enum
 from datetime import datetime
+from enum import Enum
 from typing import Optional
-from uuid import UUID
-from uuid import uuid4
+from uuid import UUID, uuid4
 
-from sqlmodel import BigInteger
-from sqlmodel import Enum
-from sqlmodel import Uuid
-from sqlmodel import Field
-from sqlmodel import SQLModel
+from sqlmodel import Field, SQLModel
 
 
-class Status(enum.Enum):
+class Status(Enum):
     ACTIVE = "active"
     INACTIVE = "inactive"
 
 
-class Role(enum.Enum):
+class Role(Enum):
     ADMIN = "admin"
     MEMBER = "member"
 
@@ -26,12 +21,12 @@ class UserBase(SQLModel):
 
 
 class User(UserBase, table=True):
-    id: Uuid = Field(default=uuid4, primary_key=True, nullable=False)
+    id: UUID = Field(default_factory=uuid4, primary_key=True, nullable=False)
     password: str = Field(nullable=False)
-    status: Enum = Field(default=Status.ACTIVE, nullable=False)
-    role: Enum = Field(default=Role.MEMBER, nullable=False)
-    created_at: BigInteger = Field(
-        default=lambda _: int(datetime.now().timestamp()), nullabe=False
+    status: Status = Field(default=Status.ACTIVE, nullable=False)
+    role: Role = Field(default=Role.MEMBER, nullable=False)
+    created_at: int = Field(
+        default_factory=lambda: int(datetime.now().timestamp()), nullable=False
     )
 
 

@@ -1,17 +1,9 @@
+from typing import Any, Generic, TypeVar, Union
 from uuid import UUID
-from typing import Any
-from typing import Generic
-from typing import TypeVar
-from typing import Union
 
-from fastapi import HTTPException
-from fastapi import status
-from pydantic import BaseModel
-from pydantic import ValidationError
-from sqlmodel import select
-from sqlmodel import Session
-from sqlmodel import SQLModel
-
+from fastapi import HTTPException, status
+from pydantic import BaseModel, ValidationError
+from sqlmodel import Session, SQLModel, select
 
 Entity = TypeVar("Entity", bound=SQLModel)
 

@@ -1,15 +1,17 @@
 import pytest
-from jose import jwt
-
 from app.core import settings
-from app.core.security import ALGORITHM
-from app.core.security import create_access_token
-from app.core.security import get_password_hash
-from app.core.security import verify_password
+from app.core.security import (
+    ALGORITHM,
+    create_access_token,
+    get_password_hash,
+    verify_password,
+)
+from app.schemas.auth import User
+from jose import jwt
 
 
 @pytest.fixture(name="password")
-def generate_password() -> str:
+def password_fixture() -> str:
     return "SECRET"
 
 
@@ -27,9 +29,12 @@ def test_hash_password_and_verify_failed(password: str):
 
 def test_create_access_token_success(password: str):
     access_token = create_access_token(
-        {"password": password}, settings.ACCESS_TOKEN_EXPIRE_MINUTES
+        User(email="test@gmail.com", password=password),
+        "jti",
+        settings.ACCESS_TOKEN_EXPIRE_MINUTES,
     )
 
     payload = jwt.decode(access_token, settings.SECRET_KEY, algorithms=[ALGORITHM])
 
-    assert payload["password"] == password
+    assert payload["email"] == "test@gmail.com"
+    assert payload["jti"] == "jti"

@@ -11,7 +11,7 @@ from app.schemas.web_response import Info, WebResponse
 from fastapi import Depends, Request, status
 from fastapi.routing import APIRouter, HTTPException
 
-router = APIRouter(prefix="/auth", tags=["auth"], dependencies=[])
+router = APIRouter(prefix="/auth", tags=["auth"])
 
 UserRepository = Annotated[DatabaseRepository[User], Depends(get_repository(User))]
 RefreshRepository = Annotated[
@@ -27,10 +27,10 @@ def login(
 ):
     user = user_repository.filter_one({"email": user_in.email})
 
-    if not verify_password(user_in.password, user.password):
+    if user is None or not verify_password(user_in.password, user.password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Password is incorrect",
+            detail="Email or password is incorrect",
         )
 
     jti = uuid4()
@@ -46,7 +46,7 @@ def login(
     )
 
     return WebResponse[dict[str, str]](
-        info=Info(message="Success login!"), data={"token": access_token}
+        info=Info(message="Success login"), data={"token": access_token}
     )
 
 
@@ -59,10 +59,10 @@ def register(repository: UserRepository, user_in: UserCreate) -> Any:
 
     return WebResponse[UserRead](
         info=Info(message="Success create user"),
-        data=UserRead().model_validate(user, from_attributes=True),
+        data=UserRead(**user.model_dump()),
     )
 
 
-@router.post("/logout")
-def logout(request: Request):
+@router.post("/logout", response_model=WebResponse)
+def logout(request: Request) -> None:
     pass
