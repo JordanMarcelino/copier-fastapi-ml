@@ -1,12 +1,6 @@
-from typing import Any
-from typing import Generic
-from typing import List
-from typing import Optional
-from typing import TypeVar
-from typing import Union
+from typing import Any, Generic, List, Optional, TypeVar, Union
 
 from pydantic import BaseModel
-
 
 T = TypeVar("T")
 
@@ -18,4 +12,5 @@ class Info(BaseModel):
 
 
 class WebResponse(Generic[T], BaseModel):
+    info: Info
     data: Optional[Union[List[T], T]] = None

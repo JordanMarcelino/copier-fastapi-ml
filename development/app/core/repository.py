@@ -78,12 +78,22 @@ class DatabaseRepository(Generic[Entity]):
         self.session.delete(instance)
         self.session.commit()
 
-    def filter(self, expression: dict[str, Any]) -> list[Entity]:
+    def filter_all(self, expression: dict[str, Any]) -> list[Entity]:
         statement = select(self.model)
 
         for key, value in expression.items():
             statement = statement.where(getattr(self.model, key) == value)
 
         instances = self.session.exec(statement).all()
+
+        return instances
+
+    def filter_one(self, expression: dict[str, Any]) -> Entity:
+        statement = select(self.model)
+
+        for key, value in expression.items():
+            statement = statement.where(getattr(self.model, key) == value)
+
+        instances = self.session.exec(statement).first()
 
         return instances

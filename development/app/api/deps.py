@@ -44,8 +44,8 @@ async def get_current_user(
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
 
-        id = payload.get("id")
-        user_db = repository.get(id)
+        user_id = payload.get("id")
+        user_db = repository.get(user_id)
 
         user_response = UserRead.model_validate(user_db, from_attributes=True)
 
