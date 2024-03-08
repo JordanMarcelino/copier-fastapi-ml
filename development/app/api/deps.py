@@ -1,14 +1,15 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Annotated, Callable, Generator
+
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError, jwt
+from sqlmodel import Session, SQLModel
 
 from app.core import DatabaseRepository, settings
 from app.core.db import engine
 from app.core.security import ALGORITHM
 from app.schemas.auth import User, UserRead
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError, jwt
-from sqlmodel import Session, SQLModel
 
 oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/auth/login", scheme_name="JWT"

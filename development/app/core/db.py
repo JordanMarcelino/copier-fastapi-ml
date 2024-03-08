@@ -1,5 +1,6 @@
-from app.core import settings
 from sqlmodel import SQLModel, create_engine
+
+from app.core import settings
 
 engine = create_engine(settings.SQLALCHEMY_DATABASE_URI)
 

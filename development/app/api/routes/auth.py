@@ -1,6 +1,9 @@
 from typing import Annotated, Any
 from uuid import uuid4
 
+from fastapi import Depends, Request, status
+from fastapi.routing import APIRouter, HTTPException
+
 from app.api.deps import get_repository
 from app.core import settings
 from app.core.repository import DatabaseRepository
@@ -8,8 +11,6 @@ from app.core.security import create_access_token, get_password_hash, verify_pas
 from app.schemas.auth import User, UserCreate, UserRead
 from app.schemas.refresh import RefreshToken, RefreshTokenCreate
 from app.schemas.web_response import Info, WebResponse
-from fastapi import Depends, Request, status
-from fastapi.routing import APIRouter, HTTPException
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 

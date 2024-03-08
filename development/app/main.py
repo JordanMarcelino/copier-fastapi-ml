@@ -1,9 +1,5 @@
 from contextlib import asynccontextmanager
 
-from app.api.main import api_router
-from app.core import limiter, settings
-from app.core.db import init_db
-from app.schemas.web_response import Info, WebResponse
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
@@ -11,6 +7,11 @@ from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from starlette.exceptions import HTTPException
 from starlette.middleware.cors import CORSMiddleware
+
+from app.api.main import api_router
+from app.core import limiter, settings
+from app.core.db import init_db
+from app.schemas.web_response import Info, WebResponse
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
