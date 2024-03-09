@@ -9,7 +9,8 @@ from sqlmodel import Session, SQLModel
 from app.core import DatabaseRepository, settings
 from app.core.db import engine
 from app.core.security import ALGORITHM
-from app.schemas.auth import User, UserRead
+from app.entity.user import User
+from app.schemas.auth import UserRead
 
 oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/auth/login", scheme_name="JWT"

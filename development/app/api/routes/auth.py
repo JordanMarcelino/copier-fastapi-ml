@@ -3,13 +3,20 @@ from uuid import uuid4
 
 from fastapi import Depends, Request, status
 from fastapi.routing import APIRouter, HTTPException
+from jose.jwt import decode
 
 from app.api.deps import get_repository
 from app.core import settings
 from app.core.repository import DatabaseRepository
-from app.core.security import create_access_token, get_password_hash, verify_password
-from app.schemas.auth import User, UserCreate, UserRead
-from app.schemas.refresh import RefreshToken, RefreshTokenCreate
+from app.core.security import (
+    ALGORITHM,
+    create_access_token,
+    get_password_hash,
+    verify_password,
+)
+from app.entity.refresh import RefreshToken, RefreshTokenCreate
+from app.entity.user import User
+from app.schemas.auth import UserCreate, UserRead
 from app.schemas.web_response import Info, WebResponse
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -65,5 +72,11 @@ def register(repository: UserRepository, user_in: UserCreate) -> Any:
 
 
 @router.post("/logout", response_model=WebResponse)
-def logout(request: Request) -> None:
-    pass
+def logout(request: Request, repository: RefreshRepository) -> Any:
+    access_token = request.headers.get("Authorization").split(" ")[1]
+    payload = decode(access_token, settings.SECRET_KEY, algorithms=[ALGORITHM])
+
+    refresh = repository.filter_one({"jti": payload["jti"]})
+    repository.delete(refresh.id)
+
+    return WebResponse[None](info=Info(message="Success logout"))

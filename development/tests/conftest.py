@@ -2,9 +2,7 @@ from typing import Generator
 
 import pytest
 from app.api.deps import get_session
-from app.core.security import get_password_hash
 from app.main import app
-from app.schemas.auth import User
 from fastapi.testclient import TestClient
 from sqlmodel import Session, SQLModel, create_engine
 from sqlmodel.pool import StaticPool

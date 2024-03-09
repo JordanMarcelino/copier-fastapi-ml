@@ -4,7 +4,7 @@ from jose import jwt
 from passlib.context import CryptContext
 
 from app.core import settings
-from app.schemas.auth import User
+from app.entity.user import User
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
 from slowapi import _rate_limit_exceeded_handler
@@ -46,6 +47,16 @@ async def error_handler(request: Request, exc: HTTPException):
             info=Info(status=False, message=exc.detail),
         ).model_dump(),
         status_code=exc.status_code,
+    )
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_handler(request: Request, exc: RequestValidationError):
+    return JSONResponse(
+        content=WebResponse[None](
+            info=Info(status=False, meta=exc.errors(), message="Unprocessable entity"),
+        ).model_dump(),
+        status_code=422,
     )
 
 

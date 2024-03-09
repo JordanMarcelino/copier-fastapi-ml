@@ -7,7 +7,7 @@ T = TypeVar("T")
 
 class Info(BaseModel):
     status: bool = True
-    meta: dict[str, Any] = None
+    meta: Any = None
     message: str
 
 

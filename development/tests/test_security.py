@@ -6,7 +6,7 @@ from app.core.security import (
     get_password_hash,
     verify_password,
 )
-from app.schemas.auth import User
+from app.entity.user import User
 from jose import jwt
 
 

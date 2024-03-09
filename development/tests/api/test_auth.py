@@ -9,26 +9,40 @@ def payload_fixture() -> dict[str, str]:
 
 
 def test_register_user_success(client: TestClient, payload: dict[str, str]) -> None:
+    response = client.post(f"{settings.API_V1_STR}/auth/register", json=payload)
+
+    json = response.json()
+
+    assert response.status_code == 200
+    assert json["info"]["status"] is True
+    assert json["info"]["message"] == "Success create user"
+    assert json["data"]["email"] == payload["email"]
+
+
+def test_register_user_failed_invalid_email(
+    client: TestClient, payload: dict[str, str]
+) -> None:
+    payload["email"] = "wrong"
 
     response = client.post(f"{settings.API_V1_STR}/auth/register", json=payload)
 
-    user = response.json()
+    json = response.json()
 
-    assert response.status_code == 200
-    assert user["info"]["status"] is True
-    assert user["info"]["message"] == "Success create user"
-    assert user["data"]["email"] == payload["email"]
+    assert response.status_code == 422
+    assert json["info"]["status"] is False
+    assert json["info"]["message"] == "Unprocessable entity"
+    assert json["data"] is None
 
 
 def test_login_user_success(client: TestClient, payload: dict[str, str]) -> None:
     response = client.post(f"{settings.API_V1_STR}/auth/login", json=payload)
 
-    user = response.json()
+    json = response.json()
 
     assert response.status_code == 200
-    assert user["info"]["status"] is True
-    assert user["info"]["message"] == "Success login"
-    assert user["data"]["token"] is not None
+    assert json["info"]["status"] is True
+    assert json["info"]["message"] == "Success login"
+    assert json["data"]["token"] is not None
 
 
 def test_login_user_failed_wrong_password(
@@ -38,12 +52,12 @@ def test_login_user_failed_wrong_password(
 
     response = client.post(f"{settings.API_V1_STR}/auth/login", json=payload)
 
-    user = response.json()
+    json = response.json()
 
     assert response.status_code == 401
-    assert user["info"]["status"] is False
-    assert user["info"]["message"] == "Email or password is incorrect"
-    assert user["data"] is None
+    assert json["info"]["status"] is False
+    assert json["info"]["message"] == "Email or password is incorrect"
+    assert json["data"] is None
 
 
 def test_login_user_failed_wrong_email(
@@ -53,9 +67,27 @@ def test_login_user_failed_wrong_email(
 
     response = client.post(f"{settings.API_V1_STR}/auth/login", json=payload)
 
-    user = response.json()
+    json = response.json()
 
-    assert response.status_code == 401
-    assert user["info"]["status"] is False
-    assert user["info"]["message"] == "Email or password is incorrect"
-    assert user["data"] is None
+    assert response.status_code == 422
+    assert json["info"]["status"] is False
+    assert json["info"]["message"] == "Unprocessable entity"
+    assert json["data"] is None
+
+
+def test_logout_user_success(client: TestClient, payload: dict[str, any]):
+    response = client.post(f"{settings.API_V1_STR}/auth/login", json=payload)
+
+    json = response.json()
+    access_token = json["data"]["token"]
+
+    response = client.post(
+        f"{settings.API_V1_STR}/auth/logout",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    json = response.json()
+
+    assert response.status_code == 200
+    assert json["info"]["status"] is True
+    assert json["info"]["message"] == "Success logout"
+    assert json["data"] is None

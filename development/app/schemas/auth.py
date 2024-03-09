@@ -1,33 +1,13 @@
-from datetime import datetime
-from enum import Enum
 from typing import Optional
-from uuid import UUID, uuid4
+from uuid import UUID
 
-from sqlmodel import Field, SQLModel
+from pydantic import BaseModel, EmailStr
 
-
-class Status(Enum):
-    ACTIVE = "active"
-    INACTIVE = "inactive"
+from app.entity.user import Role, Status
 
 
-class Role(Enum):
-    ADMIN = "admin"
-    MEMBER = "member"
-
-
-class UserBase(SQLModel):
-    email: str = Field(unique=True, index=True, nullable=False)
-
-
-class User(UserBase, table=True):
-    id: UUID = Field(default_factory=uuid4, primary_key=True, nullable=False)
-    password: str = Field(nullable=False)
-    status: Status = Field(default=Status.ACTIVE, nullable=False)
-    role: Role = Field(default=Role.MEMBER, nullable=False)
-    created_at: int = Field(
-        default_factory=lambda: int(datetime.now().timestamp()), nullable=False
-    )
+class UserBase(BaseModel):
+    email: EmailStr
 
 
 class UserCreate(UserBase):
