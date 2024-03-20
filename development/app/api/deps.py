@@ -116,3 +116,5 @@ async def check_refresh_token(
             user, jti, settings.ACCESS_TOKEN_EXPIRE_MINUTES
         )
         request.headers["Authorization"] = access_token
+
+    request.user_id = user.id

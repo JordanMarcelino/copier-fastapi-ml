@@ -91,3 +91,21 @@ def test_logout_user_success(client: TestClient, payload: dict[str, any]):
     assert json["info"]["status"] is True
     assert json["info"]["message"] == "Success logout"
     assert json["data"] is None
+
+
+def test_profile_user_success(client: TestClient, payload: dict[str, any]):
+    response = client.post(f"{settings.API_V1_STR}/auth/login", json=payload)
+
+    json = response.json()
+    access_token = json["data"]["token"]
+
+    response = client.get(
+        f"{settings.API_V1_STR}/auth/profile",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    json = response.json()
+
+    assert response.status_code == 200
+    assert json["info"]["status"] is True
+    assert json["info"]["message"] == "Success get profile"
+    assert json["data"]["email"] == payload["email"]

@@ -5,7 +5,7 @@ from fastapi import Depends, Request, status
 from fastapi.routing import APIRouter, HTTPException
 from jose.jwt import decode
 
-from app.api.deps import get_repository
+from app.api.deps import check_refresh_token, get_repository
 from app.core import settings
 from app.core.repository import DatabaseRepository
 from app.core.security import (
@@ -80,3 +80,15 @@ def logout(request: Request, repository: RefreshRepository) -> Any:
     repository.delete(refresh.id)
 
     return WebResponse[None](info=Info(message="Success logout"))
+
+
+@router.get(
+    "/profile", response_model=WebResponse, dependencies=[Depends(check_refresh_token)]
+)
+def profile(request: Request, user_repository: UserRepository):
+    user = user_repository.get(request.user_id)
+
+    return WebResponse[UserRead](
+        info=Info(message="Success get profile"),
+        data=UserRead(**user.model_dump()),
+    )
