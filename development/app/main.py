@@ -4,13 +4,11 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
-from slowapi import _rate_limit_exceeded_handler
-from slowapi.errors import RateLimitExceeded
 from starlette.exceptions import HTTPException
 from starlette.middleware.cors import CORSMiddleware
 
 from app.api.main import api_router
-from app.core import limiter, settings
+from app.core import limiter, logger, settings
 from app.core.db import init_db
 from app.schemas.web_response import Info, WebResponse
 
@@ -37,11 +35,11 @@ app = FastAPI(
 
 # Rate limiter
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 
 @app.exception_handler(HTTPException)
 async def error_handler(request: Request, exc: HTTPException):
+    logger.error(exc)
     return JSONResponse(
         content=WebResponse[None](
             info=Info(status=False, message=exc.detail),
@@ -52,6 +50,7 @@ async def error_handler(request: Request, exc: HTTPException):
 
 @app.exception_handler(RequestValidationError)
 async def validation_handler(request: Request, exc: RequestValidationError):
+    logger.error(exc)
     return JSONResponse(
         content=WebResponse[None](
             info=Info(status=False, meta=exc.errors(), message="Unprocessable entity"),
