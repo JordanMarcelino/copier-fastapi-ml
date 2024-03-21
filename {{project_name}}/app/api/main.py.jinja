@@ -1,6 +1,10 @@
 from fastapi.routing import APIRouter
 
+{% if use_auth %}
 from app.api.routes import auth
+{% endif %}
 
 api_router = APIRouter()
+{% if use_auth %}
 api_router.include_router(auth.router)
+{% endif %}

@@ -42,8 +42,7 @@ class Settings(BaseSettings):
 
         return f"postgresql://{info.data.get('POSTGRES_USER')}:{info.data.get('POSTGRES_PASSWORD')}@{info.data.get('POSTGRES_HOST')}:5432/{info.data.get('POSTGRES_DB')}?sslmode=disable"
 
-    # TODO: Change env_file to .env
-    model_config = SettingsConfigDict(case_sensitive=True, env_file=".env.dev")
+    model_config = SettingsConfigDict(case_sensitive=True, env_file=".env")
 
 
 settings = Settings()

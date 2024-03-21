@@ -1,0 +1,13 @@
+from app.core import settings
+
+
+def test_app_configuration() -> None:
+    assert settings.API_V1_STR == "/api/v1"
+    assert settings.ACCESS_TOKEN_EXPIRE_MINUTES == 60 * 24 * 1
+    assert settings.REFRESH_TOKEN_EXPIRE_MINUTES == 60 * 24 * 7
+    assert settings.BACKEND_CORS_ORIGINS is not None
+    
+def test_db_configuration() -> None:
+    assert settings.POSTGRES_USER == {{postgres_user}}
+    assert settings.POSTGRES_PASSWORD == {{postgres_password}}
+    assert settings.POSTGRES_DB == {{postgres_database}}
