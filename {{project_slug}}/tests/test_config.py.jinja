@@ -8,6 +8,6 @@ def test_app_configuration() -> None:
     assert settings.BACKEND_CORS_ORIGINS is not None
     
 def test_db_configuration() -> None:
-    assert settings.POSTGRES_USER == {{postgres_user}}
-    assert settings.POSTGRES_PASSWORD == {{postgres_password}}
-    assert settings.POSTGRES_DB == {{postgres_database}}
+    assert settings.POSTGRES_USER == "{{postgres_user}}"
+    assert settings.POSTGRES_PASSWORD == "{{postgres_password}}"
+    assert settings.POSTGRES_DB == "{{postgres_database}}"
