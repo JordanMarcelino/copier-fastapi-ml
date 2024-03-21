@@ -11,7 +11,7 @@ services:
             - db
         restart: always
         environment:
-            POSTGRES_DB: "{{postgres_database}}"
+            POSTGRES_DB: {{postgres_database}}
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: postgres
             POSTGRES_HOST: db
@@ -20,6 +20,6 @@ services:
         image: postgres:latest
         restart: always
         environment:
-            POSTGRES_DB: "{{postgres_database}}"
+            POSTGRES_DB: {{postgres_database}}
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: postgres
