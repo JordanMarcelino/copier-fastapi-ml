@@ -3,6 +3,7 @@ from uuid import UUID
 
 from fastapi import HTTPException, status
 from pydantic import BaseModel, ValidationError
+from sqlalchemy.exc import SQLAlchemyError
 from sqlmodel import Session, SQLModel, select
 
 Entity = TypeVar("Entity", bound=SQLModel)
@@ -17,7 +18,7 @@ class DatabaseRepository(Generic[Entity]):
         instance = self.session.get(self.model, pk)
         if instance is None:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Not found!"
+                status_code=status.HTTP_404_NOT_FOUND, detail="Not found"
             )
         return instance
 
@@ -35,13 +36,18 @@ class DatabaseRepository(Generic[Entity]):
             self.session.refresh(instance)
 
             return instance
-        except ValidationError as exc:
+        except (SQLAlchemyError, ValidationError) as exc:
             self.session.rollback()
 
-            raise HTTPException(
+            error = HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="Unprocessable entity!",
-            ) from exc
+                detail="Unprocessable entity",
+            )
+
+            if isinstance(exc, SQLAlchemyError):
+                error.detail = "Error when creating entity"
+
+            raise error
 
     def update(self, pk: Union[UUID, int], payload: BaseModel) -> Entity:
         try:
@@ -56,13 +62,18 @@ class DatabaseRepository(Generic[Entity]):
             self.session.refresh(instance)
 
             return instance
-        except ValidationError as exc:
+        except (SQLAlchemyError, ValidationError) as exc:
             self.session.rollback()
 
-            raise HTTPException(
+            error = HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="Unprocessable entity!",
-            ) from exc
+                detail="Unprocessable entity",
+            )
+
+            if isinstance(exc, SQLAlchemyError):
+                error.detail = "Error when updating entity"
+
+            raise error
 
     def delete(self, pk: Union[UUID, int]) -> None:
         instance = self.get(pk)

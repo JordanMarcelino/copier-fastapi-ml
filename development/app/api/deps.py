@@ -72,16 +72,15 @@ async def check_refresh_token(
 ) -> None:
     try:
         access_token = request.headers.get("Authorization").split(" ")[1]
+        decode_access_token = decode(
+            access_token, settings.SECRET_KEY, algorithms=[ALGORITHM]
+        )
     except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
             headers={"WWW-Authenticate": "Bearer"},
         ) from exc
-
-    decode_access_token = decode(
-        access_token, settings.SECRET_KEY, algorithms=[ALGORITHM]
-    )
 
     jti = decode_access_token["jti"]
     refresh_token = refresh_repository.filter_one({"jti": jti})

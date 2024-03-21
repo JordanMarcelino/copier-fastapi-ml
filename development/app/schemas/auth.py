@@ -3,6 +3,7 @@ from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel, EmailStr, field_validator
+from pydantic_core import PydanticCustomError
 
 from app.entity.user import Role, Status
 
@@ -23,9 +24,14 @@ class UserCreate(UserBase):
     def validate_password(cls, v: str) -> str:
         pattern = r"^(?=.*\d)(?=.*[!@#$%^&*()-_=+{};:,<.>?])(?=.*[a-zA-Z]).{8,}$"
 
-        if not bool(re.match(pattern, v)):
-            raise ValueError(
-                "Invalid password. It must be at least 8 characters long, contain at least one digit, and contain at least one special character."
+        password_is_valid = bool(re.match(pattern, v))
+        if not password_is_valid:
+            raise PydanticCustomError(
+                "value_error",
+                "value is not a valid password. It must be at least 8 characters long, contain at least one digit, and contain at least one special character.",
+                {
+                    "reason": " Password must be at least 8 characters long, contain at least one digit, and contain at least one special character"
+                },
             )
 
         return v

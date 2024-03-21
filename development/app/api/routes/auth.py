@@ -75,6 +75,7 @@ def register(repository: UserRepository, user_in: UserCreate) -> Any:
 def logout(request: Request, repository: RefreshRepository) -> Any:
     try:
         access_token = request.headers.get("Authorization").split(" ")[1]
+        payload = decode(access_token, settings.SECRET_KEY, algorithms=[ALGORITHM])
     except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -82,9 +83,14 @@ def logout(request: Request, repository: RefreshRepository) -> Any:
             headers={"WWW-Authenticate": "Bearer"},
         ) from exc
 
-    payload = decode(access_token, settings.SECRET_KEY, algorithms=[ALGORITHM])
-
     refresh = repository.filter_one({"jti": payload["jti"]})
+
+    if refresh is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Refresh token invalid",
+        )
+
     repository.delete(refresh.id)
 
     return WebResponse[None](info=Info(message="Success logout"))
