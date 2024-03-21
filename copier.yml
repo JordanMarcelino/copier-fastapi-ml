@@ -41,3 +41,8 @@ postgres_password:
 postgres_database:
     type: str
     help: Postgres database name for your project
+
+use_auth:
+    type: bool
+    help: Do you want to use authentication features (login, register, logout, profile, and JWT) ?
+    default: yes
