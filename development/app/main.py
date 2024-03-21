@@ -19,8 +19,11 @@ def custom_generate_unique_id(route: APIRoute) -> str:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Migrate table
-    init_db()
+    try:
+        # Migrate table
+        init_db()
+    except Exception as exc:
+        logger.error(exc)
 
     yield
 
@@ -31,6 +34,7 @@ app = FastAPI(
     redoc_url=f"{settings.API_V1_STR}/redoc",
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
     generate_unique_id_function=custom_generate_unique_id,
+    lifespan=lifespan,
 )
 
 # Rate limiter

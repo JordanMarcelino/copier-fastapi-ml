@@ -16,7 +16,7 @@ from app.core.security import (
 )
 from app.entity.refresh import RefreshToken, RefreshTokenCreate
 from app.entity.user import User
-from app.schemas.auth import UserCreate, UserRead
+from app.schemas.auth import UserCreate, UserLogin, UserRead
 from app.schemas.web_response import Info, WebResponse
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -31,7 +31,7 @@ RefreshRepository = Annotated[
 def login(
     user_repository: UserRepository,
     refresh_repository: RefreshRepository,
-    user_in: UserCreate,
+    user_in: UserLogin,
 ):
     user = user_repository.filter_one({"email": user_in.email})
 
@@ -73,7 +73,15 @@ def register(repository: UserRepository, user_in: UserCreate) -> Any:
 
 @router.post("/logout", response_model=WebResponse)
 def logout(request: Request, repository: RefreshRepository) -> Any:
-    access_token = request.headers.get("Authorization").split(" ")[1]
+    try:
+        access_token = request.headers.get("Authorization").split(" ")[1]
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        ) from exc
+
     payload = decode(access_token, settings.SECRET_KEY, algorithms=[ALGORITHM])
 
     refresh = repository.filter_one({"jti": payload["jti"]})

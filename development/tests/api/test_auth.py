@@ -5,7 +5,7 @@ from fastapi.testclient import TestClient
 
 @pytest.fixture(name="payload")
 def payload_fixture() -> dict[str, str]:
-    return {"email": "dummy@gmail.com", "password": "secret"}
+    return {"email": "dummy@gmail.com", "password": "secret1@"}
 
 
 def test_register_user_success(client: TestClient, payload: dict[str, str]) -> None:
@@ -23,6 +23,51 @@ def test_register_user_failed_invalid_email(
     client: TestClient, payload: dict[str, str]
 ) -> None:
     payload["email"] = "wrong"
+
+    response = client.post(f"{settings.API_V1_STR}/auth/register", json=payload)
+
+    json = response.json()
+
+    assert response.status_code == 422
+    assert json["info"]["status"] is False
+    assert json["info"]["message"] == "Unprocessable entity"
+    assert json["data"] is None
+
+
+def test_register_user_failed_invalid_password_at_least_eight_character(
+    client: TestClient, payload: dict[str, str]
+) -> None:
+    payload["email"] = "secr1@"
+
+    response = client.post(f"{settings.API_V1_STR}/auth/register", json=payload)
+
+    json = response.json()
+
+    assert response.status_code == 422
+    assert json["info"]["status"] is False
+    assert json["info"]["message"] == "Unprocessable entity"
+    assert json["data"] is None
+
+
+def test_register_user_failed_invalid_password_at_least_one_digit(
+    client: TestClient, payload: dict[str, str]
+) -> None:
+    payload["email"] = "secrett@"
+
+    response = client.post(f"{settings.API_V1_STR}/auth/register", json=payload)
+
+    json = response.json()
+
+    assert response.status_code == 422
+    assert json["info"]["status"] is False
+    assert json["info"]["message"] == "Unprocessable entity"
+    assert json["data"] is None
+
+
+def test_register_user_failed_invalid_password_at_least_one_special_character(
+    client: TestClient, payload: dict[str, str]
+) -> None:
+    payload["email"] = "secrett1"
 
     response = client.post(f"{settings.API_V1_STR}/auth/register", json=payload)
 
